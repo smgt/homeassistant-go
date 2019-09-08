@@ -10,27 +10,40 @@ import (
 
 // Device represents the device
 type Device struct {
-	Ident        string   `json:"ids,omitempty"`
-	Name         string   `json:"name,omitempty"`
-	Sensors      []Sensor `json:"-"`
-	Manufacturer string   `json:"mf,omitempty"`
-	Model        string   `json:"mdl,omitempty"`
+	Ident        string      `json:"ids,omitempty"`
+	Name         string      `json:"name,omitempty"`
+	Components   []Component `json:"-"`
+	Manufacturer string      `json:"mf,omitempty"`
+	Model        string      `json:"mdl,omitempty"`
 }
 
 // AddSensor to the device
-func (d *Device) AddSensor(sensor *Sensor) {
-	sensor.Device = d
-	d.Sensors = append(d.Sensors, *sensor)
+// func (d *Device) AddSensor(sensor *Sensor) {
+// 	sensor.Device = d
+// 	d.Sensors = append(d.Sensors, *sensor)
+// }
+
+// AddComponent to the device
+func (d *Device) AddComponent(component Component) error {
+	ident := component.GetIdent()
+	for _, c := range d.Components {
+		if c.GetIdent() == ident {
+			return fmt.Errorf("Component already added with ident %s", ident)
+		}
+	}
+	component.SetDevice(d)
+	d.Components = append(d.Components, component)
+	return nil
 }
 
-// GetSensor by ident
-func (d *Device) GetSensor(ident string) (Sensor, error) {
-	for _, s := range d.Sensors {
-		if s.Ident == ident {
+// GetComponent by ident
+func (d *Device) GetComponent(ident string) (Component, error) {
+	for _, s := range d.Components {
+		if s.GetIdent() == ident {
 			return s, nil
 		}
 	}
-	return Sensor{}, errors.New("Sensor not found")
+	return nil, errors.New("Sensor not found")
 }
 
 // GetAvailabilityTopic return the device availability topic for broker
