@@ -202,3 +202,13 @@ func (s *Sensor) GetDiscoverPayload() ([]byte, error) {
 		Device:            *s.Device,
 	})
 }
+
+// GetDevice of sensor
+func (s *Sensor) GetDevice() *Device {
+	return s.Device
+}
+
+// SetDevice of sensor
+func (s *Sensor) SetDevice(device *Device) {
+	s.Device = device
+}
